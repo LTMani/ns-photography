@@ -65,10 +65,10 @@ export const initialSiteConfig = {
     imageAlt: "Cinematic portrait of photographer with professional camera",
     secondaryImage: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80",
     stats: [
-      { id: "stat-1", value: "5+", label: "Years Experience", numeric: 5 },
-      { id: "stat-2", value: "500+", label: "Happy Clients", numeric: 500 },
-      { id: "stat-3", value: "1000+", label: "Memorable Moments", numeric: 1000 },
-      { id: "stat-4", value: "50+", label: "Destination Weddings", numeric: 50 },
+      { id: "stat-1", value: "30+", label: "Years Experience", numeric: 30 },
+      { id: "stat-2", value: "3500+", label: "Happy Clients", numeric: 3500 },
+      { id: "stat-3", value: "9000+", label: "Memorable Moments", numeric: 9000 },
+      { id: "stat-4", value: "250+", label: "Destination Weddings", numeric: 250 },
     ],
   },
   behindLens: {
