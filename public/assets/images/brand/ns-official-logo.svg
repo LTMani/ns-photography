@@ -1,0 +1,225 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048" width="2048" height="2048">
+  <defs>
+    <!-- Luxury Gold Linear Gradients -->
+    <linearGradient id="goldLinear" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff8db" />
+      <stop offset="25%" stop-color="#e8c15a" />
+      <stop offset="50%" stop-color="#d4af37" />
+      <stop offset="75%" stop-color="#aa8014" />
+      <stop offset="100%" stop-color="#fceda2" />
+    </linearGradient>
+
+    <linearGradient id="goldBright" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#bf9526" />
+      <stop offset="30%" stop-color="#fceda2" />
+      <stop offset="60%" stop-color="#d4af37" />
+      <stop offset="100%" stop-color="#fff2be" />
+    </linearGradient>
+
+    <!-- Radial Glows -->
+    <radialGradient id="centerGlow" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#d4af37" stop-opacity="0.22" />
+      <stop offset="45%" stop-color="#d4af37" stop-opacity="0.06" />
+      <stop offset="100%" stop-color="#070709" stop-opacity="0" />
+    </radialGradient>
+
+    <filter id="goldShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.8" />
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#d4af37" flood-opacity="0.25" />
+    </filter>
+
+    <filter id="intenseGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Deep Velvet Charcoal Background -->
+  <rect width="2048" height="2048" fill="#070709" />
+  
+  <!-- Subtle Atmospheric Gold Radial Glow -->
+  <circle cx="1024" cy="780" r="900" fill="url(#centerGlow)" />
+
+  <!-- ==================== CAMERA BODY OUTLINE ==================== -->
+  <g filter="url(#goldShadow)">
+    <!-- Top Left Shutter Button / Dial -->
+    <rect x="490" y="390" width="160" height="48" rx="16" fill="url(#goldLinear)" />
+
+    <!-- Top Right Flash/Sensor Small Circle -->
+    <circle cx="1500" cy="580" r="32" fill="none" stroke="url(#goldLinear)" stroke-width="14" />
+    <circle cx="1500" cy="580" r="14" fill="url(#goldLinear)" />
+
+    <!-- Main Camera Outer Silhouette Path -->
+    <path d="M 430 470 
+             L 760 470 
+             Q 820 470 860 410 
+             L 910 335 
+             Q 940 290 1000 290 
+             L 1048 290 
+             Q 1108 290 1138 335 
+             L 1188 410 
+             Q 1228 470 1288 470 
+             L 1618 470 
+             A 70 70 0 0 1 1688 540 
+             L 1688 1110 
+             A 70 70 0 0 1 1618 1180 
+             L 430 1180 
+             A 70 70 0 0 1 360 1110 
+             L 360 540 
+             A 70 70 0 0 1 430 470 Z" 
+          fill="none" 
+          stroke="url(#goldLinear)" 
+          stroke-width="26" 
+          stroke-linejoin="round" />
+
+    <!-- Left & Right Flowing Flourish Ribbons emerging from base -->
+    <path d="M 360 1100 Q 200 1100 0 1010" fill="none" stroke="url(#goldLinear)" stroke-width="20" stroke-linecap="round" />
+    <path d="M 360 1100 Q 180 1140 30 1180" fill="none" stroke="url(#goldLinear)" stroke-width="10" stroke-linecap="round" opacity="0.7" />
+    
+    <path d="M 1688 1100 Q 1848 1100 2048 1010" fill="none" stroke="url(#goldLinear)" stroke-width="20" stroke-linecap="round" />
+    <path d="M 1688 1100 Q 1868 1140 2018 1180" fill="none" stroke="url(#goldLinear)" stroke-width="10" stroke-linecap="round" opacity="0.7" />
+  </g>
+
+  <!-- ==================== LENS APERTURE RINGS ==================== -->
+  <g filter="url(#goldShadow)">
+    <!-- Lens Base Mount Octagon/Circle Facets -->
+    <polygon points="1024,330 1342,462 1474,780 1342,1098 1024,1230 706,1098 574,780 706,462"
+             fill="none" 
+             stroke="url(#goldLinear)" 
+             stroke-width="14" 
+             opacity="0.45" />
+
+    <!-- Outer Golden Lens Bezel -->
+    <circle cx="1024" cy="780" r="410" fill="none" stroke="url(#goldLinear)" stroke-width="28" />
+
+    <!-- Middle Knurled Ring -->
+    <circle cx="1024" cy="780" r="375" fill="none" stroke="url(#goldBright)" stroke-width="10" stroke-dasharray="12,10" />
+
+    <!-- Inner Golden Lens Bezel -->
+    <circle cx="1024" cy="780" r="348" fill="none" stroke="url(#goldLinear)" stroke-width="16" />
+
+    <!-- Lens Glass Background -->
+    <circle cx="1024" cy="780" r="338" fill="#090a0d" />
+  </g>
+
+  <!-- ==================== FLOWING SCRIPT "NS" MONOGRAM ==================== -->
+  <g filter="url(#goldShadow)">
+    <!-- Elegant Calligraphic "N" -->
+    <path d="M 760 930 
+             C 740 930, 725 915, 730 890 
+             C 745 810, 785 640, 810 560 
+             C 815 540, 835 530, 855 530 
+             C 875 530, 890 545, 885 570 
+             L 815 850 
+             C 860 760, 930 630, 975 560 
+             C 990 535, 1015 525, 1035 535 
+             C 1055 545, 1065 570, 1055 595 
+             L 970 910 
+             C 960 945, 935 960, 905 950 
+             C 885 940, 875 920, 885 890 
+             L 935 710 
+             L 790 920 
+             C 780 930, 770 930, 760 930 Z" 
+          fill="url(#goldBright)" />
+
+    <!-- Initial Swirl on N -->
+    <path d="M 680 730 C 720 730 750 780 735 830 C 720 870 685 880 660 855 C 635 830 645 770 700 740" 
+          fill="none" 
+          stroke="url(#goldLinear)" 
+          stroke-width="18" 
+          stroke-linecap="round" />
+
+    <!-- Elegant Calligraphic "S" with intertwined flourishes -->
+    <path d="M 1030 920 
+             C 1050 965, 1105 1000, 1180 990 
+             C 1270 980, 1330 910, 1315 820 
+             C 1300 750, 1220 705, 1130 660 
+             C 1060 625, 1030 585, 1040 530 
+             C 1055 460, 1120 420, 1205 435 
+             C 1260 445, 1295 480, 1285 530 
+             C 1275 565, 1240 575, 1215 555 
+             C 1195 540, 1200 515, 1225 495 
+             C 1180 480, 1130 495, 1115 535 
+             C 1105 575, 1130 605, 1190 635 
+             C 1280 675, 1385 725, 1365 845 
+             C 1345 965, 1245 1045, 1125 1035 
+             C 1045 1025, 985 970, 1005 905 
+             C 1015 870, 1050 865, 1070 885 
+             C 1090 905, 1075 930, 1030 920 Z" 
+          fill="url(#goldBright)" />
+
+    <!-- Terminal Flourish Loop on S -->
+    <path d="M 1260 970 C 1340 990 1430 940 1410 850 C 1390 770 1310 770 1280 810" 
+          fill="none" 
+          stroke="url(#goldLinear)" 
+          stroke-width="16" 
+          stroke-linecap="round" />
+  </g>
+
+  <!-- ==================== SECONDARY TEXT: PHOTOGRAPHY ==================== -->
+  <g filter="url(#goldShadow)">
+    <text x="1024" y="1380" 
+          text-anchor="middle" 
+          font-family="'Cinzel', 'Playfair Display', Georgia, serif" 
+          font-size="96" 
+          font-weight="800" 
+          letter-spacing="46" 
+          fill="url(#goldBright)">
+      PHOTOGRAPHY
+    </text>
+  </g>
+
+  <!-- ==================== FILIGREE ORNAMENTAL DIVIDER ==================== -->
+  <g filter="url(#goldShadow)">
+    <!-- Left Divider Line with tapering -->
+    <line x1="280" y1="1480" x2="880" y2="1480" stroke="url(#goldLinear)" stroke-width="6" stroke-linecap="round" />
+    
+    <!-- Right Divider Line with tapering -->
+    <line x1="1168" y1="1480" x2="1768" y2="1480" stroke="url(#goldLinear)" stroke-width="6" stroke-linecap="round" />
+
+    <!-- Center Diamond & Flourish Emblem -->
+    <path d="M 1024 1450 L 1054 1480 L 1024 1510 L 994 1480 Z" fill="url(#goldBright)" />
+    <circle cx="940" cy="1480" r="10" fill="url(#goldLinear)" />
+    <circle cx="895" cy="1480" r="6" fill="url(#goldLinear)" />
+    <circle cx="1108" cy="1480" r="10" fill="url(#goldLinear)" />
+    <circle cx="1153" cy="1480" r="6" fill="url(#goldLinear)" />
+  </g>
+
+  <!-- ==================== TAGLINE ==================== -->
+  <g filter="url(#goldShadow)">
+    <text x="1024" y="1575" 
+          text-anchor="middle" 
+          font-family="'Plus Jakarta Sans', system-ui, sans-serif" 
+          font-size="44" 
+          font-weight="600" 
+          letter-spacing="22" 
+          fill="#e2c875">
+      CAPTURING TIMELESS MEMORIES
+    </text>
+
+    <!-- Lower Secondary Divider Line -->
+    <line x1="420" y1="1650" x2="1628" y2="1650" stroke="url(#goldLinear)" stroke-width="4" stroke-opacity="0.6" stroke-linecap="round" />
+  </g>
+
+  <!-- ==================== CONTACT PHONE NUMBERS ==================== -->
+  <g filter="url(#goldShadow)">
+    <!-- Left WhatsApp / Phone Icon -->
+    <circle cx="490" cy="1770" r="44" fill="none" stroke="url(#goldLinear)" stroke-width="8" />
+    <path d="M 474 1754 C 476 1750, 484 1748, 488 1756 L 494 1768 C 496 1772, 494 1776, 490 1778 L 486 1782 C 490 1790, 498 1798, 506 1802 L 510 1778 C 512 1774, 516 1772, 520 1774 L 532 1780 C 540 1784, 538 1792, 534 1794 C 522 1802, 508 1798, 496 1790 C 484 1782, 476 1770, 474 1754 Z" fill="url(#goldBright)" />
+
+    <!-- Phone Numbers: 9848760197 - 9848523630 -->
+    <text x="1024" y="1788" 
+          text-anchor="middle" 
+          font-family="'Plus Jakarta Sans', ui-monospace, monospace" 
+          font-size="52" 
+          font-weight="700" 
+          letter-spacing="8" 
+          fill="url(#goldBright)">
+      9848760197 &#8212; 9848523630
+    </text>
+
+    <!-- Right Phone Icon -->
+    <circle cx="1558" cy="1770" r="44" fill="none" stroke="url(#goldLinear)" stroke-width="8" />
+    <path d="M 1542 1754 C 1544 1750, 1552 1748, 1556 1756 L 1562 1768 C 1564 1772, 1562 1776, 1558 1778 L 1554 1782 C 1558 1790, 1566 1798, 1574 1802 L 1578 1778 C 1580 1774, 1584 1772, 1588 1774 L 1600 1780 C 1608 1784, 1606 1792, 1602 1794 C 1590 1802, 1576 1798, 1564 1790 C 1552 1782, 1544 1770, 1542 1754 Z" fill="url(#goldBright)" />
+  </g>
+</svg>

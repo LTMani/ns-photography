@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --gold: #d4af37;
+    --gold-light: #f3e5ab;
+    --gold-dark: #997a15;
+    --charcoal: #121316;
+    --bg-dark: #070709;
+    --bg-surface: #0e0f13;
+    --font-cinzel: 'Cinzel', serif;
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-script: 'Caveat', cursive;
+    --font-serif: 'Playfair Display', Georgia, serif;
+  }
+
+  body {
+    background-color: var(--bg-dark);
+    color: #e2e2e8;
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .font-cinzel {
+    font-family: var(--font-cinzel);
+    letter-spacing: 0.05em;
+  }
+
+  .font-script {
+    font-family: var(--font-script);
+  }
+
+  .font-serif-luxury {
+    font-family: var(--font-serif);
+  }
+}
+
+/* Luxury Metallic & Gold Text Accents */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #fff7d6 0%, #d4af37 40%, #aa820a 75%, #f5e297 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gold-subtle {
+  color: #d4af37;
+}
+
+.border-gold-subtle {
+  border-color: rgba(212, 175, 55, 0.25);
+}
+
+.border-gold-glow {
+  border-color: rgba(212, 175, 55, 0.5);
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.15);
+}
+
+/* Glassmorphism Cards & Panels */
+.glass-panel {
+  background: rgba(14, 15, 19, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-gold {
+  background: rgba(18, 17, 14, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Zero-overhead dark luxury atmosphere */
+.film-grain {
+  display: none;
+}
+
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #070709;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2824;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d4af37;
+}
+
+/* Hide scrollbar for clean horizontal gallery */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Hover depth animations */
+.hover-depth-card {
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.hover-depth-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8), 0 0 25px rgba(212, 175, 55, 0.12);
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Preloader Keyframes */
+@keyframes spinReverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes shimmerSweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
