@@ -81,4 +81,13 @@ export default defineConfig({
     tailwindcss(),
     localContentSaverPlugin(),
   ],
+  preview: {
+    allowedHosts: true,
+  },
+  server: {
+    allowedHosts: true,
+  },
+  build: {
+    chunkSizeWarningLimit: 3000,
+  },
 })
