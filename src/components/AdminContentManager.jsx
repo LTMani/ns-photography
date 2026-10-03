@@ -290,7 +290,6 @@ export default function AdminContentManager() {
             { id: 'about', label: 'About & Stats' },
             { id: 'gallery', label: 'Gallery (Add/Edit)' },
             { id: 'categories', label: 'Categories' },
-            { id: 'project', label: 'Featured Project' },
             { id: 'services', label: 'Services' },
             { id: 'contact', label: 'Contact Details' },
             { id: 'security', label: 'Security & Password 🔒' },
@@ -777,84 +776,6 @@ export default function AdminContentManager() {
             </div>
           )}
 
-          {/* TAB: FEATURED PROJECT */}
-          {activeTab === 'project' && (
-            <div className="space-y-6">
-              <h4 className="font-cinzel text-base font-bold text-[#d4af37]">
-                Featured Cinema Project
-              </h4>
-
-              {projectsData[0] && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-xs font-mono text-[#a0a0b2] block mb-1">
-                        Project Title
-                      </label>
-                      <input
-                        type="text"
-                        value={projectsData[0].title}
-                        onChange={(e) => {
-                          const updated = [...projectsData];
-                          updated[0].title = e.target.value;
-                          setProjectsData(updated);
-                        }}
-                        className="w-full px-4 py-2.5 rounded-xl bg-[#08090d] border border-white/10 text-white text-sm"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="text-xs font-mono text-[#a0a0b2] block mb-1">
-                        Subtitle
-                      </label>
-                      <input
-                        type="text"
-                        value={projectsData[0].subtitle}
-                        onChange={(e) => {
-                          const updated = [...projectsData];
-                          updated[0].subtitle = e.target.value;
-                          setProjectsData(updated);
-                        }}
-                        className="w-full px-4 py-2.5 rounded-xl bg-[#08090d] border border-white/10 text-white text-sm"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-mono text-[#a0a0b2] block mb-1">
-                      Project Description
-                    </label>
-                    <textarea
-                      rows={3}
-                      value={projectsData[0].description}
-                      onChange={(e) => {
-                        const updated = [...projectsData];
-                        updated[0].description = e.target.value;
-                        setProjectsData(updated);
-                      }}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#08090d] border border-white/10 text-white text-sm"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-mono text-[#a0a0b2] block mb-1">
-                      Featured Main Image URL
-                    </label>
-                    <input
-                      type="text"
-                      value={projectsData[0].mainImage}
-                      onChange={(e) => {
-                        const updated = [...projectsData];
-                        updated[0].mainImage = e.target.value;
-                        setProjectsData(updated);
-                      }}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#08090d] border border-white/10 text-white text-sm"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
 
           {/* TAB: CONTACT DETAILS */}
           {activeTab === 'contact' && (

@@ -4,7 +4,6 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import AboutSection from './components/AboutSection';
 import WorkCategories from './components/WorkCategories';
-import FeaturedProject from './components/FeaturedProject';
 import Gallery from './components/Gallery';
 import Services from './components/Services';
 import BehindLens from './components/BehindLens';
@@ -79,9 +78,6 @@ function MainApp() {
 
       {/* Work Disciplines Floating Cards */}
       <WorkCategories onSelectCategory={(cat) => setActiveCategory(cat)} />
-
-      {/* Featured Cinematic Project: A Story of Two Hearts */}
-      <FeaturedProject onOpenLightbox={handleOpenLightbox} />
 
       {/* Filterable Curated Gallery with Grid & Cinema Strip */}
       <Gallery
