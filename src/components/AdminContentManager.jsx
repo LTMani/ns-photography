@@ -23,12 +23,21 @@ import {
   Lock,
   AlertCircle,
   CheckCircle2,
+  Cloud,
+  Database,
+  Globe,
+  RefreshCw,
 } from 'lucide-react';
 import AdminLogin, {
   SESSION_STORAGE_KEY,
   getStoredCredentials,
   saveCredentials,
 } from './AdminLogin';
+import {
+  getFirebaseConfig,
+  saveFirebaseConfig,
+  saveLiveContentToCloud,
+} from '../lib/firebase';
 
 export default function AdminContentManager() {
   const {
@@ -48,6 +57,8 @@ export default function AdminContentManager() {
     setContactData,
     storageStatus,
     saveAllChanges,
+    isCloudConnected,
+    setIsCloudConnected,
     isAdminOpen,
     setIsAdminOpen,
     resetToDefaults,
@@ -56,6 +67,71 @@ export default function AdminContentManager() {
   } = useContent();
 
   const [saveToast, setSaveToast] = useState('');
+  const [cloudStatus, setCloudStatus] = useState({ type: '', message: '' });
+  const [firebaseForm, setFirebaseForm] = useState(() => {
+    const existing = getFirebaseConfig();
+    return {
+      apiKey: existing?.apiKey || '',
+      projectId: existing?.projectId || '',
+      authDomain: existing?.authDomain || '',
+      storageBucket: existing?.storageBucket || '',
+      appId: existing?.appId || '',
+    };
+  });
+
+  const handleManualSave = async () => {
+    setSaveToast('Saving changes...');
+    const res = await saveAllChanges();
+    if (res && res.success) {
+      if (res.cloudSaved) {
+        setSaveToast('Saved to browser storage & Synced LIVE to Cloud Firestore ☁️✓');
+      } else {
+        setSaveToast('Saved to browser storage ✓ (Connect Cloud Sync to update mobile/worldwide)');
+      }
+      setTimeout(() => setSaveToast(''), 3500);
+    } else {
+      setSaveToast(`Save warning: ${res?.error || 'Failed to save'}`);
+      setTimeout(() => setSaveToast(''), 4000);
+    }
+  };
+
+  const handleSaveFirebaseConfig = async (e) => {
+    e.preventDefault();
+    setCloudStatus({ type: '', message: '' });
+    if (!firebaseForm.apiKey || !firebaseForm.projectId) {
+      setCloudStatus({ type: 'error', message: 'API Key and Project ID are required.' });
+      return;
+    }
+
+    const saved = saveFirebaseConfig({
+      apiKey: firebaseForm.apiKey.trim(),
+      projectId: firebaseForm.projectId.trim(),
+      authDomain: firebaseForm.authDomain.trim() || `${firebaseForm.projectId.trim()}.firebaseapp.com`,
+      storageBucket: firebaseForm.storageBucket.trim() || `${firebaseForm.projectId.trim()}.appspot.com`,
+      appId: firebaseForm.appId.trim(),
+    });
+
+    if (saved) {
+      setIsCloudConnected(true);
+      setCloudStatus({ type: 'success', message: 'Testing connection and uploading live content to Cloud Firestore...' });
+      
+      const syncRes = await saveLiveContentToCloud({
+        siteConfig,
+        galleryItems,
+        workCategories,
+        servicesData,
+        contactData,
+      });
+
+      if (syncRes.success) {
+        setCloudStatus({ type: 'success', message: 'Firebase Firestore connected & synced successfully! All devices now load live content. 🚀' });
+      } else {
+        setCloudStatus({ type: 'error', message: `Connected, but initial sync failed: ${syncRes.error}` });
+      }
+    } else {
+      setCloudStatus({ type: 'error', message: 'Failed to save Firebase configuration to browser.' });
+    }
+  };
 
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     try {
@@ -86,17 +162,6 @@ export default function AdminContentManager() {
     caption: '',
     aspectRatio: 'square',
   });
-
-  const handleManualSave = () => {
-    const res = saveAllChanges();
-    if (res && res.success) {
-      setSaveToast('All changes saved to browser storage ✓');
-      setTimeout(() => setSaveToast(''), 3000);
-    } else {
-      setSaveToast(`Save warning: ${res?.error || 'Failed to save'}`);
-      setTimeout(() => setSaveToast(''), 4000);
-    }
-  };
 
   const handleLogout = () => {
     try {
@@ -216,13 +281,17 @@ export default function AdminContentManager() {
                 <h3 className="font-cinzel font-bold text-lg text-white">
                   NS PHOTOGRAPHY — CONTENT ARCHITECT
                 </h3>
-                {storageStatus?.state === 'error' ? (
+                {isCloudConnected ? (
+                  <span className="text-[10px] font-mono text-amber-300 bg-amber-950/70 border border-amber-500/40 px-2 py-0.5 rounded-full flex items-center gap-1 shadow-[0_0_10px_rgba(212,175,55,0.2)]">
+                    ☁️ Cloud Sync Active
+                  </span>
+                ) : storageStatus?.state === 'error' ? (
                   <span className="text-[10px] font-mono text-red-400 bg-red-950/70 border border-red-500/40 px-2 py-0.5 rounded-full flex items-center gap-1">
                     ⚠️ Storage Warning
                   </span>
                 ) : (
                   <span className="text-[10px] font-mono text-green-400 bg-green-950/70 border border-green-500/40 px-2 py-0.5 rounded-full flex items-center gap-1">
-                    ● Saved Live
+                    ● Local Storage
                   </span>
                 )}
               </div>
@@ -292,6 +361,7 @@ export default function AdminContentManager() {
             { id: 'categories', label: 'Categories' },
             { id: 'services', label: 'Services' },
             { id: 'contact', label: 'Contact Details' },
+            { id: 'cloud', label: 'Cloud Sync ☁️' },
             { id: 'security', label: 'Security & Password 🔒' },
           ].map((tab) => (
             <button
@@ -985,6 +1055,187 @@ export default function AdminContentManager() {
                     />
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB: CLOUD SYNC */}
+          {activeTab === 'cloud' && (
+            <div className="max-w-3xl mx-auto space-y-6 py-4">
+              <div className="flex items-center gap-3 pb-4 border-b border-white/10">
+                <div className="w-12 h-12 rounded-2xl bg-[#d4af37]/15 border border-[#d4af37]/40 flex items-center justify-center text-[#d4af37]">
+                  <Cloud className="w-6 h-6" />
+                </div>
+                <div>
+                  <h4 className="font-cinzel text-lg font-bold text-white flex items-center gap-2">
+                    <span>GLOBAL CLOUD DATABASE SYNCHRONIZATION</span>
+                    {isCloudConnected ? (
+                      <span className="text-[10px] font-mono text-amber-300 bg-amber-950/70 border border-amber-500/40 px-2 py-0.5 rounded-full">
+                        ACTIVE
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-mono text-neutral-400 bg-neutral-900 border border-neutral-700 px-2 py-0.5 rounded-full">
+                        NOT CONNECTED
+                      </span>
+                    )}
+                  </h4>
+                  <p className="text-xs text-[#8a8a9a] font-sans">
+                    Connect Google Firebase Firestore to instantly broadcast every edit made here to all mobile phones & visitors globally.
+                  </p>
+                </div>
+              </div>
+
+              {cloudStatus.message && (
+                <div
+                  className={`p-4 rounded-xl flex items-center gap-3 text-xs font-mono border ${
+                    cloudStatus.type === 'success'
+                      ? 'bg-green-950/60 border-green-500/40 text-green-300'
+                      : 'bg-red-950/60 border-red-500/40 text-red-300'
+                  }`}
+                >
+                  {cloudStatus.type === 'success' ? (
+                    <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-green-400" />
+                  ) : (
+                    <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-400" />
+                  )}
+                  <span>{cloudStatus.message}</span>
+                </div>
+              )}
+
+              {/* Status explanation card */}
+              <div className="p-4 rounded-2xl bg-[#08090d] border border-white/10 space-y-2">
+                <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#d4af37]">
+                  <Database className="w-4 h-4" />
+                  <span>How Global Cloud Sync Works</span>
+                </div>
+                <p className="text-xs text-[#a0a0b2] leading-relaxed">
+                  1. When connected, every change you save in this admin panel uploads in real time to your Cloud Firestore database.<br />
+                  2. Whenever anyone visits your website on mobile or laptop anywhere in the world, the website automatically loads the latest live photos and details from the cloud!
+                </p>
+              </div>
+
+              {/* Firebase Credentials Form */}
+              <form onSubmit={handleSaveFirebaseConfig} className="p-6 rounded-2xl bg-[#08090d] border border-[#d4af37]/30 space-y-4">
+                <h5 className="font-cinzel text-sm font-bold text-white flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-[#d4af37]" />
+                  <span>Firebase Firestore Credentials</span>
+                </h5>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-mono text-[#a0a0b2] uppercase mb-1.5">
+                      Firebase API Key *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={firebaseForm.apiKey}
+                      onChange={(e) => setFirebaseForm({ ...firebaseForm, apiKey: e.target.value })}
+                      placeholder="AIzaSy..."
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#0f1015] border border-white/10 focus:border-[#d4af37] focus:outline-none text-white text-xs font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-mono text-[#a0a0b2] uppercase mb-1.5">
+                      Project ID *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={firebaseForm.projectId}
+                      onChange={(e) => setFirebaseForm({ ...firebaseForm, projectId: e.target.value })}
+                      placeholder="ns-photography-12345"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#0f1015] border border-white/10 focus:border-[#d4af37] focus:outline-none text-white text-xs font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-mono text-[#a0a0b2] uppercase mb-1.5">
+                      Auth Domain
+                    </label>
+                    <input
+                      type="text"
+                      value={firebaseForm.authDomain}
+                      onChange={(e) => setFirebaseForm({ ...firebaseForm, authDomain: e.target.value })}
+                      placeholder="your-project.firebaseapp.com"
+                      className="w-full px-3 py-2 rounded-xl bg-[#0f1015] border border-white/10 text-white text-xs font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-mono text-[#a0a0b2] uppercase mb-1.5">
+                      Storage Bucket
+                    </label>
+                    <input
+                      type="text"
+                      value={firebaseForm.storageBucket}
+                      onChange={(e) => setFirebaseForm({ ...firebaseForm, storageBucket: e.target.value })}
+                      placeholder="your-project.appspot.com"
+                      className="w-full px-3 py-2 rounded-xl bg-[#0f1015] border border-white/10 text-white text-xs font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-mono text-[#a0a0b2] uppercase mb-1.5">
+                      App ID (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={firebaseForm.appId}
+                      onChange={(e) => setFirebaseForm({ ...firebaseForm, appId: e.target.value })}
+                      placeholder="1:123456789:web:abcdef"
+                      className="w-full px-3 py-2 rounded-xl bg-[#0f1015] border border-white/10 text-white text-xs font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2 flex flex-col sm:flex-row gap-3">
+                  <button
+                    type="submit"
+                    className="flex-1 py-3 rounded-xl bg-gradient-to-r from-[#d4af37] to-[#b8901a] text-black font-bold text-xs tracking-widest uppercase hover:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all flex items-center justify-center gap-2"
+                  >
+                    <Cloud className="w-4 h-4" />
+                    <span>SAVE & CONNECT FIREBASE CLOUD</span>
+                  </button>
+
+                  {isCloudConnected && (
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        setCloudStatus({ type: '', message: 'Syncing all current site data to Cloud Firestore...' });
+                        const res = await saveLiveContentToCloud({
+                          siteConfig,
+                          galleryItems,
+                          workCategories,
+                          servicesData,
+                          contactData,
+                        });
+                        if (res.success) {
+                          setCloudStatus({ type: 'success', message: 'All website content synced to Cloud Firestore live! 🚀' });
+                        } else {
+                          setCloudStatus({ type: 'error', message: `Sync failed: ${res.error}` });
+                        }
+                      }}
+                      className="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-mono text-xs flex items-center justify-center gap-2 transition-all border border-white/10"
+                    >
+                      <RefreshCw className="w-4 h-4 text-[#d4af37]" />
+                      <span>Sync All To Cloud</span>
+                    </button>
+                  )}
+                </div>
+              </form>
+
+              {/* Quick instructions accordion */}
+              <div className="p-4 rounded-xl bg-neutral-900/50 border border-white/10 text-xs text-[#8a8a9a] space-y-2">
+                <span className="font-bold text-white block">
+                  Quick 2-Minute Setup on Firebase (100% Free):
+                </span>
+                <ol className="list-decimal pl-4 space-y-1">
+                  <li>Go to <strong className="text-white">console.firebase.google.com</strong> and click "Add Project" (e.g. <code>ns-photography</code>).</li>
+                  <li>In left sidebar, click <strong className="text-white">Build ➔ Firestore Database</strong>, then click "Create database" (Start in test mode).</li>
+                  <li>Click Project Settings (Gear icon) ➔ scroll down to "Your apps" ➔ Web app (&lt;/&gt;) ➔ Copy <code>apiKey</code> and <code>projectId</code> and paste above!</li>
+                </ol>
               </div>
             </div>
           )}

@@ -5,6 +5,11 @@ import { initialProjectsData } from './projectsData';
 import { initialServicesData } from './servicesData';
 import { initialBlogData } from './blogData';
 import { initialContactData } from './contactData';
+import {
+  fetchLiveContentFromCloud,
+  saveLiveContentToCloud,
+  getFirebaseConfig,
+} from '../lib/firebase';
 
 const STORAGE_KEY = 'ns_photography_content_v1';
 
@@ -137,6 +142,23 @@ export function ContentProvider({ children }) {
 
   // Admin Modal State
   const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [isCloudConnected, setIsCloudConnected] = useState(!!getFirebaseConfig());
+
+  // Attempt to load live data from Firestore on mount
+  useEffect(() => {
+    async function loadCloudData() {
+      const cloudData = await fetchLiveContentFromCloud();
+      if (cloudData) {
+        setIsCloudConnected(true);
+        if (cloudData.siteConfig) setSiteConfig(cloudData.siteConfig);
+        if (cloudData.galleryItems) setGalleryItems(cloudData.galleryItems);
+        if (cloudData.workCategories) setWorkCategories(cloudData.workCategories);
+        if (cloudData.servicesData) setServicesData(cloudData.servicesData);
+        if (cloudData.contactData) setContactData(cloudData.contactData);
+      }
+    }
+    loadCloudData();
+  }, []);
 
   // Sync to localStorage
   useEffect(() => {
@@ -167,7 +189,7 @@ export function ContentProvider({ children }) {
     safeSave(`${STORAGE_KEY}_contact`, contactData);
   }, [contactData]);
 
-  const saveAllChanges = () => {
+  const saveAllChanges = async () => {
     try {
       safeSave(`${STORAGE_KEY}_site`, siteConfig);
       safeSave(`${STORAGE_KEY}_gallery`, galleryItems);
@@ -175,7 +197,24 @@ export function ContentProvider({ children }) {
       safeSave(`${STORAGE_KEY}_projects`, projectsData);
       safeSave(`${STORAGE_KEY}_services`, servicesData);
       safeSave(`${STORAGE_KEY}_contact`, contactData);
-      return { success: true };
+
+      // Save to Cloud Firestore if connected
+      let cloudResult = null;
+      if (getFirebaseConfig()) {
+        cloudResult = await saveLiveContentToCloud({
+          siteConfig,
+          galleryItems,
+          workCategories,
+          servicesData,
+          contactData,
+        });
+      }
+
+      return {
+        success: true,
+        cloudSaved: cloudResult ? cloudResult.success : false,
+        cloudError: cloudResult && !cloudResult.success ? cloudResult.error : null,
+      };
     } catch (err) {
       return { success: false, error: err.message };
     }
@@ -262,6 +301,8 @@ export function ContentProvider({ children }) {
         setIsAdminOpen,
         storageStatus,
         saveAllChanges,
+        isCloudConnected,
+        setIsCloudConnected,
         resetToDefaults,
         exportDataAsJson,
         importDataFromJson,
