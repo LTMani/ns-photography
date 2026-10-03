@@ -84,7 +84,9 @@ export default function AdminContentManager() {
     const res = await saveAllChanges();
     if (res && res.success) {
       if (res.cloudSaved) {
-        setSaveToast('Saved to browser storage & Synced LIVE to Cloud Firestore ☁️✓');
+        setSaveToast('Saved to browser & Synced LIVE to Cloud Firestore ☁️✓');
+      } else if (res.diskSaved) {
+        setSaveToast('Saved permanently to project files on disk & browser storage ✓');
       } else {
         setSaveToast('Saved to browser storage ✓ (Connect Cloud Sync to update mobile/worldwide)');
       }

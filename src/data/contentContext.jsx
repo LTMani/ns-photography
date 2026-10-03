@@ -198,6 +198,25 @@ export function ContentProvider({ children }) {
       safeSave(`${STORAGE_KEY}_services`, servicesData);
       safeSave(`${STORAGE_KEY}_contact`, contactData);
 
+      // Save to local source files if running under Vite dev server
+      let diskSaved = false;
+      try {
+        const res = await fetch('/api/save-content', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            siteConfig,
+            galleryItems,
+            workCategories,
+            servicesData,
+            contactData,
+          }),
+        });
+        if (res.ok) diskSaved = true;
+      } catch (devErr) {
+        // Silent fallback in production build
+      }
+
       // Save to Cloud Firestore if connected
       let cloudResult = null;
       if (getFirebaseConfig()) {
@@ -212,6 +231,7 @@ export function ContentProvider({ children }) {
 
       return {
         success: true,
+        diskSaved,
         cloudSaved: cloudResult ? cloudResult.success : false,
         cloudError: cloudResult && !cloudResult.success ? cloudResult.error : null,
       };
