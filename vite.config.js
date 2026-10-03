@@ -82,10 +82,12 @@ export default defineConfig({
     localContentSaverPlugin(),
   ],
   preview: {
-    allowedHosts: true,
+    host: true,
+    port: process.env.PORT ? parseInt(process.env.PORT, 10) : 4173,
+    allowedHosts: ['ns-photography.onrender.com'],
   },
   server: {
-    allowedHosts: true,
+    host: true,
   },
   build: {
     chunkSizeWarningLimit: 3000,
