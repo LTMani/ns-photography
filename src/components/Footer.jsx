@@ -139,8 +139,9 @@ export default function Footer() {
 
         </div>
 
-        {/* Bottom Bar: Copyright & Back To Top */}
+        {/* Bottom Bar: Copyright, Credits & Back To Top */}
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-6 text-xs font-mono text-[#666678]">
+          {/* Left: Copyright & Credits */}
           <div className="flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
             <p>© {new Date().getFullYear()} {siteConfig.brand.name}. All Rights Reserved.</p>
             <span className="hidden sm:inline text-neutral-700">•</span>
@@ -166,6 +167,9 @@ export default function Footer() {
               </a>
             </div>
           </div>
+
+          {/* Right: Instagram, Slogan & Back to Top */}
+          <div className="flex flex-wrap items-center justify-center gap-6">
             <a
               href={contactData.instagramUrl || "https://www.instagram.com/chinnanerella1982?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw=="}
               target="_blank"
