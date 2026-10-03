@@ -11,30 +11,42 @@ const STORAGE_KEY = 'ns_photography_content_v1';
 const ContentContext = createContext(null);
 
 export function ContentProvider({ children }) {
-  // Load saved content or fallback to defaults
+  // Load saved content or fallback to defaults without destructive overwrites
   const [siteConfig, setSiteConfig] = useState(() => {
     try {
       const saved = localStorage.getItem(`${STORAGE_KEY}_site`);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed.brand) {
-          parsed.brand.logoImage = '/assets/images/brand/ns-official-logo-hd.jpg';
-        }
-
-        if (parsed.behindLens) {
-          parsed.behindLens.heading = "HI, I'M NARASIMHA RAO";
-          parsed.behindLens.photographerImage = "/assets/images/about/narasimharao-photographer.jpg";
-          parsed.behindLens.signatureText = "Narasimha Rao";
-        }
-        return parsed;
+        return {
+          ...initialSiteConfig,
+          ...parsed,
+          brand: {
+            ...initialSiteConfig.brand,
+            ...parsed.brand,
+            logoImage: parsed.brand?.logoImage || initialSiteConfig.brand.logoImage,
+          },
+          hero: {
+            ...initialSiteConfig.hero,
+            ...parsed.hero,
+          },
+          about: {
+            ...initialSiteConfig.about,
+            ...parsed.about,
+          },
+          behindLens: {
+            ...initialSiteConfig.behindLens,
+            ...parsed.behindLens,
+            heading: parsed.behindLens?.heading || initialSiteConfig.behindLens.heading,
+            photographerImage: parsed.behindLens?.photographerImage || initialSiteConfig.behindLens.photographerImage,
+            signatureText: parsed.behindLens?.signatureText || initialSiteConfig.behindLens.signatureText,
+          },
+        };
       }
-
       return initialSiteConfig;
     } catch {
       return initialSiteConfig;
     }
   });
-
 
   const [galleryItems, setGalleryItems] = useState(() => {
     try {
@@ -86,17 +98,13 @@ export function ContentProvider({ children }) {
       const saved = localStorage.getItem(`${STORAGE_KEY}_contact`);
       if (saved) {
         const parsed = JSON.parse(saved);
-        parsed.googleMapsUrl = initialContactData.googleMapsUrl;
-        parsed.instagramUrl = initialContactData.instagramUrl;
-        parsed.instagramHandle = initialContactData.instagramHandle;
-        if (Array.isArray(parsed.socials)) {
-          const ig = parsed.socials.find((s) => s.name?.toLowerCase() === 'instagram');
-          if (ig) {
-            ig.url = initialContactData.instagramUrl;
-            ig.handle = initialContactData.instagramHandle;
-          }
-        }
-        return parsed;
+        return {
+          ...initialContactData,
+          ...parsed,
+          googleMapsUrl: parsed.googleMapsUrl || initialContactData.googleMapsUrl,
+          instagramUrl: parsed.instagramUrl || initialContactData.instagramUrl,
+          instagramHandle: parsed.instagramHandle || initialContactData.instagramHandle,
+        };
       }
       return initialContactData;
     } catch {
@@ -104,66 +112,74 @@ export function ContentProvider({ children }) {
     }
   });
 
+  // Storage status tracker
+  const [storageStatus, setStorageStatus] = useState({
+    state: 'saved', // 'saved' | 'saving' | 'error'
+    lastSaved: Date.now(),
+    errorMessage: '',
+  });
+
+  const safeSave = (key, data) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+      setStorageStatus({ state: 'saved', lastSaved: Date.now(), errorMessage: '' });
+      return true;
+    } catch (e) {
+      console.warn("Storage error for", key, e);
+      let msg = "Storage error occurred while saving.";
+      if (e.name === 'QuotaExceededError' || e.code === 22) {
+        msg = "Browser storage limit reached! Please use online image URLs (Unsplash/Imgur) instead of large base64 data.";
+      }
+      setStorageStatus({ state: 'error', lastSaved: Date.now(), errorMessage: msg });
+      return false;
+    }
+  };
 
   // Admin Modal State
   const [isAdminOpen, setIsAdminOpen] = useState(false);
 
   // Sync to localStorage
   useEffect(() => {
-    try {
-      localStorage.setItem(`${STORAGE_KEY}_site`, JSON.stringify(siteConfig));
-    } catch (e) {
-      console.warn("Storage error", e);
-    }
+    safeSave(`${STORAGE_KEY}_site`, siteConfig);
   }, [siteConfig]);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(`${STORAGE_KEY}_gallery`, JSON.stringify(galleryItems));
-    } catch (e) {
-      console.warn("Storage error", e);
-    }
+    safeSave(`${STORAGE_KEY}_gallery`, galleryItems);
   }, [galleryItems]);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(`${STORAGE_KEY}_categories`, JSON.stringify(workCategories));
-    } catch (e) {
-      console.warn("Storage error", e);
-    }
+    safeSave(`${STORAGE_KEY}_categories`, workCategories);
   }, [workCategories]);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(`${STORAGE_KEY}_projects`, JSON.stringify(projectsData));
-    } catch (e) {
-      console.warn("Storage error", e);
-    }
+    safeSave(`${STORAGE_KEY}_projects`, projectsData);
   }, [projectsData]);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(`${STORAGE_KEY}_services`, JSON.stringify(servicesData));
-    } catch (e) {
-      console.warn("Storage error", e);
-    }
+    safeSave(`${STORAGE_KEY}_services`, servicesData);
   }, [servicesData]);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(`${STORAGE_KEY}_blog`, JSON.stringify(blogData));
-    } catch (e) {
-      console.warn("Storage error", e);
-    }
+    safeSave(`${STORAGE_KEY}_blog`, blogData);
   }, [blogData]);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(`${STORAGE_KEY}_contact`, JSON.stringify(contactData));
-    } catch (e) {
-      console.warn("Storage error", e);
-    }
+    safeSave(`${STORAGE_KEY}_contact`, contactData);
   }, [contactData]);
+
+  const saveAllChanges = () => {
+    try {
+      safeSave(`${STORAGE_KEY}_site`, siteConfig);
+      safeSave(`${STORAGE_KEY}_gallery`, galleryItems);
+      safeSave(`${STORAGE_KEY}_categories`, workCategories);
+      safeSave(`${STORAGE_KEY}_projects`, projectsData);
+      safeSave(`${STORAGE_KEY}_services`, servicesData);
+      safeSave(`${STORAGE_KEY}_contact`, contactData);
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  };
 
   // Reset function
   const resetToDefaults = () => {
@@ -244,6 +260,8 @@ export function ContentProvider({ children }) {
         setContactData,
         isAdminOpen,
         setIsAdminOpen,
+        storageStatus,
+        saveAllChanges,
         resetToDefaults,
         exportDataAsJson,
         importDataFromJson,

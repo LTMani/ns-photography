@@ -15,6 +15,9 @@ export default function ThreeDHero({ onFallbackRequired }) {
   const { siteConfig } = useContent();
   const [webGLSupported, setWebGLSupported] = useState(true);
 
+  const logoImage = siteConfig.brand?.logoImage || '/assets/images/brand/ns-official-logo-hd.jpg';
+  const heroImagesKey = JSON.stringify(siteConfig.hero?.heroImages || []);
+
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -184,7 +187,7 @@ export default function ThreeDHero({ onFallbackRequired }) {
 
     // Load User's Exact Official Uploaded Logo for Ultra-Crisp Sharpness
     const emblemImg = new Image();
-    emblemImg.src = '/assets/images/brand/ns-official-logo-hd.jpg';
+    emblemImg.src = logoImage;
     emblemImg.onload = () => {
       const hdCanvas = document.createElement('canvas');
       hdCanvas.width = 1024;
@@ -419,7 +422,7 @@ export default function ThreeDHero({ onFallbackRequired }) {
         }
       }
     };
-  }, [siteConfig, onFallbackRequired]);
+  }, [logoImage, heroImagesKey, onFallbackRequired]);
 
   if (!webGLSupported) {
     return null;

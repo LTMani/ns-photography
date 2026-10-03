@@ -46,12 +46,16 @@ export default function AdminContentManager() {
     setBlogData,
     contactData,
     setContactData,
+    storageStatus,
+    saveAllChanges,
     isAdminOpen,
     setIsAdminOpen,
     resetToDefaults,
     exportDataAsJson,
     importDataFromJson,
   } = useContent();
+
+  const [saveToast, setSaveToast] = useState('');
 
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     try {
@@ -82,6 +86,17 @@ export default function AdminContentManager() {
     caption: '',
     aspectRatio: 'square',
   });
+
+  const handleManualSave = () => {
+    const res = saveAllChanges();
+    if (res && res.success) {
+      setSaveToast('All changes saved to browser storage ✓');
+      setTimeout(() => setSaveToast(''), 3000);
+    } else {
+      setSaveToast(`Save warning: ${res?.error || 'Failed to save'}`);
+      setTimeout(() => setSaveToast(''), 4000);
+    }
+  };
 
   const handleLogout = () => {
     try {
@@ -197,9 +212,20 @@ export default function AdminContentManager() {
               <Sliders className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-cinzel font-bold text-lg text-white">
-                NS PHOTOGRAPHY — CONTENT ARCHITECT
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="font-cinzel font-bold text-lg text-white">
+                  NS PHOTOGRAPHY — CONTENT ARCHITECT
+                </h3>
+                {storageStatus?.state === 'error' ? (
+                  <span className="text-[10px] font-mono text-red-400 bg-red-950/70 border border-red-500/40 px-2 py-0.5 rounded-full flex items-center gap-1">
+                    ⚠️ Storage Warning
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-mono text-green-400 bg-green-950/70 border border-green-500/40 px-2 py-0.5 rounded-full flex items-center gap-1">
+                    ● Saved Live
+                  </span>
+                )}
+              </div>
               <p className="text-[10px] font-mono text-[#8a8a9a] uppercase">
                 Centralized Live Content & Image Management System
               </p>
@@ -207,6 +233,15 @@ export default function AdminContentManager() {
           </div>
 
           <div className="flex items-center gap-2.5">
+            <button
+              onClick={handleManualSave}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#d4af37] hover:bg-[#e6c158] text-black font-bold text-xs font-mono transition-all shadow-[0_0_15px_rgba(212,175,55,0.3)]"
+              title="Save all changes directly to persistent storage"
+            >
+              <Save className="w-3.5 h-3.5" />
+              <span>Save Changes</span>
+            </button>
+
             <button
               onClick={exportDataAsJson}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-mono text-[#d4af37] border border-[#d4af37]/30 transition-all"
@@ -276,6 +311,19 @@ export default function AdminContentManager() {
 
         {/* Tab Content Area */}
         <div className="p-6 sm:p-8 overflow-y-auto flex-1 space-y-6">
+          {saveToast && (
+            <div className="p-3.5 rounded-xl bg-green-950/80 border border-green-500/50 text-green-300 text-xs font-mono flex items-center gap-2.5 animate-fade-in shadow-lg">
+              <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0" />
+              <span>{saveToast}</span>
+            </div>
+          )}
+
+          {storageStatus?.state === 'error' && (
+            <div className="p-3.5 rounded-xl bg-red-950/80 border border-red-500/50 text-red-200 text-xs font-mono flex items-center gap-2.5 shadow-lg">
+              <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
+              <span>{storageStatus.errorMessage}</span>
+            </div>
+          )}
           
           {/* TAB: BRAND & HERO */}
           {activeTab === 'hero' && (
@@ -1167,13 +1215,17 @@ export default function AdminContentManager() {
         </div>
 
         {/* Bottom Footer in Admin */}
-        <div className="p-4 bg-[#08090c] border-t border-white/10 flex items-center justify-between">
-          <span className="text-[11px] font-mono text-[#8a8a9a]">
-            All changes auto-save instantly to localStorage and reflect in real time.
-          </span>
+        <div className="p-4 bg-[#08090c] border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-[11px] font-mono text-[#8a8a9a]">
+            <span className="w-2 h-2 rounded-full bg-green-400"></span>
+            <span>Changes persist in your browser across sessions. Click "Export JSON" anytime to back up your custom configuration.</span>
+          </div>
           <button
-            onClick={() => setIsAdminOpen(false)}
-            className="px-6 py-2 rounded-xl bg-[#d4af37] text-black font-bold text-xs uppercase tracking-wider hover:opacity-90 transition-opacity"
+            onClick={() => {
+              saveAllChanges();
+              setIsAdminOpen(false);
+            }}
+            className="px-6 py-2 rounded-xl bg-[#d4af37] text-black font-bold text-xs uppercase tracking-wider hover:opacity-90 transition-opacity shadow-[0_0_20px_rgba(212,175,55,0.25)] flex-shrink-0"
           >
             Done Editing
           </button>
