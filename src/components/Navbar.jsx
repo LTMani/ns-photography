@@ -14,7 +14,7 @@ export default function Navbar() {
       setIsScrolled(window.scrollY > 40);
 
       // Simple active section detection
-      const sections = ['home', 'about', 'work', 'featured', 'services', 'stories', 'contact'];
+      const sections = ['home', 'about', 'work', 'featured', 'services', 'contact'];
       for (const section of sections) {
         const el = document.getElementById(section);
         if (el) {
@@ -36,7 +36,6 @@ export default function Navbar() {
     { name: 'ABOUT', href: '#about', id: 'about' },
     { name: 'WORK', href: '#work', id: 'work' },
     { name: 'SERVICES', href: '#services', id: 'services' },
-    { name: 'STORIES', href: '#stories', id: 'stories' },
     { name: 'CONTACT', href: '#contact', id: 'contact' },
   ];
 

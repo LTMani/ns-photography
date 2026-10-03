@@ -257,7 +257,6 @@ export default function AdminContentManager() {
             { id: 'categories', label: 'Categories' },
             { id: 'project', label: 'Featured Project' },
             { id: 'services', label: 'Services' },
-            { id: 'blog', label: 'Blog & Stories' },
             { id: 'contact', label: 'Contact Details' },
             { id: 'security', label: 'Security & Password 🔒' },
           ].map((tab) => (
@@ -985,53 +984,6 @@ export default function AdminContentManager() {
             </div>
           )}
 
-          {/* TAB: BLOG & STORIES */}
-          {activeTab === 'blog' && (
-            <div className="space-y-6">
-              <h4 className="font-cinzel text-base font-bold text-[#d4af37]">
-                Blog Stories ({blogData.posts?.length})
-              </h4>
-              <div className="space-y-4">
-                {blogData.posts?.map((post, i) => (
-                  <div key={post.id || i} className="p-4 rounded-xl bg-[#08090d] border border-white/10 space-y-3">
-                    <input
-                      type="text"
-                      value={post.title}
-                      onChange={(e) => {
-                        const updated = [...blogData.posts];
-                        updated[i].title = e.target.value;
-                        setBlogData({ ...blogData, posts: updated });
-                      }}
-                      className="w-full px-3 py-1.5 rounded-lg bg-[#111218] border border-white/10 text-xs font-bold text-white"
-                    />
-                    <div className="grid grid-cols-2 gap-2">
-                      <input
-                        type="text"
-                        value={post.category}
-                        onChange={(e) => {
-                          const updated = [...blogData.posts];
-                          updated[i].category = e.target.value;
-                          setBlogData({ ...blogData, posts: updated });
-                        }}
-                        className="px-3 py-1.5 rounded-lg bg-[#111218] border border-white/10 text-xs text-[#d4af37]"
-                      />
-                      <input
-                        type="text"
-                        value={post.image}
-                        onChange={(e) => {
-                          const updated = [...blogData.posts];
-                          updated[i].image = e.target.value;
-                          setBlogData({ ...blogData, posts: updated });
-                        }}
-                        className="px-3 py-1.5 rounded-lg bg-[#111218] border border-white/10 text-xs text-[#a0a0b2]"
-                        placeholder="Image URL"
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* TAB: CATEGORIES */}
           {activeTab === 'categories' && (

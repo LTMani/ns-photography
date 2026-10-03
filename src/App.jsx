@@ -8,7 +8,6 @@ import FeaturedProject from './components/FeaturedProject';
 import Gallery from './components/Gallery';
 import Services from './components/Services';
 import BehindLens from './components/BehindLens';
-import Blog from './components/Blog';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import CustomCursor from './components/CustomCursor';
@@ -96,9 +95,6 @@ function MainApp() {
 
       {/* Behind The Lens Story & Signature */}
       <BehindLens />
-
-      {/* Blog & Stories Frame by Frame */}
-      <Blog />
 
       {/* Contact Section & WhatsApp Inquiry */}
       <Contact />
